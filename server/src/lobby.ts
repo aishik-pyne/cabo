@@ -1,37 +1,45 @@
-import { Room } from "./room"
-import * as crypto from "crypto";
+import { Player } from "./models/player";
+import { Room, RoomOptions } from "./room"
+import { getRandomRoomName } from "./utils/random_generator";
+
+
 
 export class Lobby {
-    private room_list: Record<string, Room>;
+    private room_list: Map<string, Room>;
 
     constructor() {
-        this.room_list = {};
+        this.room_list = new Map<string, Room>();
     };
 
     getRoomById(ID: string): Room | null {
         if (ID in this.room_list) {
-            return this.room_list[ID];
+            return this.room_list.get(ID) as Room | null;
         }
         return null;
     }
 
-    createRoom(): Room {
-        let ID: string = crypto.randomBytes(5).toString('hex');
+    createRoom(owner: Player, opt: RoomOptions = {
+        max_players: 4
+    }): Room {
+        let ID: string = getRandomRoomName();
 
         // Generate a string till its safe
         while (ID in this.room_list) {
-            ID = crypto.randomBytes(5).toString('hex');
+            ID = getRandomRoomName();
         }
 
-        const room: Room = new Room(ID);
-        this.room_list[ID] = room;
+        const room: Room = new Room(ID, owner, opt);
+        this.room_list.set(ID, room);
         return room
     }
 
     deleteRoom(ID: string) {
-        const room = this.getRoomById(ID);
-        if (room) {
-            delete this.room_list[ID]
+        if (this.room_list.has(ID)) {
+            this.room_list.delete(ID);
         }
+    }
+
+    listRoom(): Room[] {
+        return Array.from(this.room_list.values());
     }
 }
