@@ -1,11 +1,11 @@
 
 import { Server as SocketIOServer } from "socket.io";
-import { Lobby } from './lobby';
-import { Room } from './room';
-import { Player, PlayerStore } from './models/player';
+import { Lobby } from '../lobby';
+import { Room } from '../room';
+import { Player, PlayerStore } from '../models/player';
 import http, { Server as HTTPServer } from "http";
-import { decodeToken, generateToken, verifyToken } from "./utils/jwt";
-import { SocketEvent, RoomEvent } from "./utils/constant";
+import { decodeToken, generateToken, verifyToken } from "../utils/jwt";
+import { SocketEvent, RoomEvent } from "../utils/constant";
 
 
 export function setupSocketServer(httpServer: HTTPServer,
@@ -22,6 +22,7 @@ export function setupSocketServer(httpServer: HTTPServer,
             verifyToken(token);
             next()
         } catch (error) {
+            console.error("Token Not Valid");
             next(new Error("Token not valid"));
         }
     });
@@ -29,11 +30,13 @@ export function setupSocketServer(httpServer: HTTPServer,
     io.use((socket, next) => {
         const token = socket.handshake.auth.token;
         const payload: Player = decodeToken(token) as Player;
+
         const player = playerStore.getPlayer(payload.id);
         if (player == null) {
-            socket.data.player = player;
+            console.error("Player Not Found");
             next(new Error("Player Not Found"));
         } else {
+            socket.data.player = player;
             next();
         }
     })
@@ -43,17 +46,17 @@ export function setupSocketServer(httpServer: HTTPServer,
         const player: Player = socket.data.player;
         console.log(`Connected ${socket.data.player.id}`);
 
-        socket.on('login', function () {
-            console.debug(`Received Event: login`);
+        // socket.on('login', function () {
+        //     console.debug(`Received Event: login`);
 
-            const player = playerStore.createPlayer();
-            const token: string = generateToken(player.id);
-            socket.emit('player', {
-                player: player,
-                token: token,
-            });
-            socket.emit('roomList', lobby.listRoom());
-        });
+        //     const player = playerStore.createPlayer();
+        //     const token: string = generateToken(player.id);
+        //     socket.emit('player', {
+        //         player: player,
+        //         token: token,
+        //     });
+        //     socket.emit('roomList', lobby.listRoom());
+        // });
 
 
         socket.on(RoomEvent.CREATE, function () {
