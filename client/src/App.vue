@@ -1,17 +1,56 @@
 <template>
   <div id="app">
-    <div v-if="isLoggedIn" class="section">
-      <logged-in-view
-        v-bind:isLoggedIn.sync="isLoggedIn"
-        :player="player"
-      ></logged-in-view>
+    <div class="section is-flex-direction-column is-flex-grow-1">
+      <div v-if="isLoggedIn">
+        <logged-in-view
+          v-bind:isLoggedIn.sync="isLoggedIn"
+          :player="player"
+        ></logged-in-view>
+      </div>
+      <div v-else>
+        <login-view
+          v-bind:isLoggedIn.sync="isLoggedIn"
+          v-bind:player.sync="player"
+        ></login-view>
+      </div>
     </div>
-    <div v-else class="section">
-      <login-view
-        v-bind:isLoggedIn.sync="isLoggedIn"
-        v-bind:player.sync="player"
-      ></login-view>
-    </div>
+    <footer class="footer p-1">
+      <div class="level">
+        <div class="level-left pl-4">
+          <p class="level-item">v0.0.1</p>
+        </div>
+        <div class="level-item">
+          <div class="has-text-centered">
+            <p>
+              <strong>Kabo</strong>
+              made with
+              <span class="icon has-text-danger">
+                <i class="fas fa-heart"></i>
+              </span>
+              by
+              <a href="https://aishikpyne.com">Aishik Pyne</a>
+            </p>
+          </div>
+        </div>
+        <div class="level-right pr-4">
+          <span class="icon-text">
+            <a
+              href="https://github.com/aishik-pyne/cabo"
+              class="has-text-black"
+            >
+              <span class="icon">
+                <i class="fab fa-github"></i>
+              </span>
+            </a>
+            <a href="https://localhost:8080/" class="has-text-black">
+              <span class="icon">
+                <i class="fas fa-share"></i>
+              </span>
+            </a>
+          </span>
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -69,6 +108,9 @@ export default {
   color: #2c3e50;
   height: 100%;
   /* margin-top: 60px; */
-  background: rgba(12, 12, 156, 0.1);
+  /* background: rgba(12, 12, 156, 0.1); */
+  display: flex;
+  flex-direction: column;
+  background-image: url("~@/assets/background.png");
 }
 </style>
