@@ -12,7 +12,7 @@ export class Lobby {
     };
 
     getRoomById(ID: string): Room | null {
-        if (ID in this.room_list) {
+        if (this.room_list.has(ID)) {
             return this.room_list.get(ID) as Room | null;
         }
         return null;
@@ -24,7 +24,7 @@ export class Lobby {
         let ID: string = getRandomRoomName();
 
         // Generate a string till its safe
-        while (ID in this.room_list) {
+        while (this.room_list.has(ID)) {
             ID = getRandomRoomName();
         }
 
