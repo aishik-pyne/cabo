@@ -1,15 +1,15 @@
-import { Game, GameState, TURN_STATES } from "../src/game"
-import { Card, RANK_TO_NUMBER } from "../src/models/cards";
-import { Deck } from "../src/models/deck";
-import { GameErrorEvents } from "../src/utils/constant";
+import { GameService, GameState, TURN_STATES } from "../../src/game"
+import { Card, RANK_TO_NUMBER } from "../../src/models/cards";
+import { Deck } from "../../src/models/deck";
+import { GameErrorEvents } from "../../src/utils/constant";
 
 describe('Testing Kabo Game', () => {
-    let game: Game;
+    let game: GameService;
     let players: string[];
 
     beforeEach(async () => {
         players = ['alpha', 'beta', 'gamma', 'delta']
-        game = new Game(players)
+        game = new GameService(players)
     })
 
     test('Test Game setup', () => {
@@ -50,7 +50,7 @@ describe('Testing Kabo Game', () => {
 
         test.each([...Array(10).keys()])('Test current player discarding card', () => {
             const drawnCard: Card = game.drawn_cards.get(players[0]) as Card
-            game.discardDrawnCard(players[0]);
+            game.throwDrawnCard(players[0]);
             expect(game.drawn_cards.get(players[0])).toBeNull()
             expect(game.discard_pile.size).toBe(1)
 
@@ -74,7 +74,7 @@ describe('Testing Kabo Game', () => {
         })
 
         test('Test other player discarding card', () => {
-            expect(() => { game.discardDrawnCard(players[1]) }).toThrowError(GameErrorEvents.NOT_YOUR_TURN)
+            expect(() => { game.throwDrawnCard(players[1]) }).toThrowError(GameErrorEvents.NOT_YOUR_TURN)
         })
     })
 
@@ -86,7 +86,7 @@ describe('Testing Kabo Game', () => {
 
         test('Test current player discarding card', () => {
             const drawnCard = game.drawn_cards.get(players[0])
-            game.swapDrawnCardWithDeck(players[0], 3);
+            game.swapDrawnCardWithHand(players[0], 3);
 
             expect(game.drawn_cards.get(players[0])).toBeNull()
             expect(game.hands.get(players[0])?.cards[3]).toBe(drawnCard)
@@ -98,7 +98,7 @@ describe('Testing Kabo Game', () => {
         })
 
         test('Test other player discarding card', () => {
-            expect(() => { game.discardDrawnCard(players[1]) }).toThrowError(GameErrorEvents.NOT_YOUR_TURN)
+            expect(() => { game.throwDrawnCard(players[1]) }).toThrowError(GameErrorEvents.NOT_YOUR_TURN)
         })
     })
 

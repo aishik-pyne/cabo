@@ -1,5 +1,4 @@
-import { Card } from "../src/models/cards"
-import { Deck } from "../src/models/deck"
+import { Deck } from "../../src/models/deck"
 
 describe('Testing Shuffled Deck', () => {
     let deck: Deck;
